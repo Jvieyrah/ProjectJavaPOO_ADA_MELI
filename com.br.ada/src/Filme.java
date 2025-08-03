@@ -3,12 +3,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Filme {
-    private final String titulo;
-    private final LocalDate dataLancamento;
-    private final double orcamento;
-    private final String descricao;
+    private String titulo;
+    private LocalDate dataLancamento;
+    private double orcamento;
+    private String descricao;
     private Diretor diretor;
-    private final List<Ator> atores;
+    private List<Ator> atores;
 
     public Filme(String titulo, LocalDate dataLancamento, double orcamento, String descricao) {
         if (titulo == null || titulo.isBlank()) {
@@ -57,6 +57,35 @@ public class Filme {
     }
 
     // Setters com validação
+
+    public void setTitulo(String titulo) {
+        if (titulo == null || titulo.isBlank()) {
+            throw new IllegalArgumentException("Título não pode ser nulo ou vazio");
+        }
+        this.titulo = titulo;
+    }
+    public void setDataLancamento(LocalDate dataLancamento) {
+        if (dataLancamento == null) {
+            throw new IllegalArgumentException("Data de lançamento não pode ser nula");
+        }
+        this.dataLancamento = dataLancamento;
+    }
+
+    public void setOrcamento(double orcamento) {
+        if (orcamento < 0) {
+            throw new IllegalArgumentException("Orçamento não pode ser negativo");
+        }
+        this.orcamento = orcamento;
+    }
+
+    public void setDescricao(String descricao) {
+        if (descricao == null) {
+            throw new IllegalArgumentException("Descrição não pode ser nula");
+        }
+        this.descricao = descricao;
+    }
+
+
     public void setDiretor(Diretor diretor) {
         if (diretor == null) {
             throw new IllegalArgumentException("Diretor não pode ser nulo");
@@ -79,12 +108,22 @@ public class Filme {
     // Método de informação formatada
     public String getInfo() {
         String nomeDiretor = (diretor != null) ? diretor.getNome() : "Não definido";
-        return String.format("Filme: %s | Diretor: %s | %d ator(es) | Lançamento: %s | Orçamento: $%,.2f",
+        String info =  String.format("Filme: %s | Diretor: %s | %d ator(es) | Lançamento: %s | Orçamento: $%,.2f",
                 titulo,
                 nomeDiretor,
                 atores.size(),
                 dataLancamento.toString(),
                 orcamento);
+
+        if (!atores.isEmpty()) {
+            info += "\nAtores:\n";
+            for (Ator ator : atores) {
+                info += String.format("- %s (%s)\n", ator.getNome(), ator.getNacionalidade());
+            }
+        } else {
+            info += "\nNenhum ator associado.";
+        }
+        return info;
     }
 
     @Override

@@ -24,6 +24,18 @@ public abstract class Pessoa {
         return nacionalidade;
     }
 
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public void setDataNascimento(LocalDate dataNascimento) {
+        this.dataNascimento = dataNascimento;
+    }
+
+    public void setNacionalidade(String nacionalidade) {
+        this.nacionalidade = nacionalidade;
+    }
+
     // Método abstrato
     public abstract String getInfo();
 

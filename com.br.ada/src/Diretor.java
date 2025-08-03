@@ -11,13 +11,28 @@ public class Diretor extends Pessoa {
     }
 
     public void dirigirFilme(Filme filme) {
+        if (filme == null) {
+            throw new IllegalArgumentException("Filme não pode ser nulo.");
+        }
+        if (filmesDirigidos.contains(filme)) {
+            throw new IllegalArgumentException("Este filme já é dirigido por este diretor.");
+        }
         filmesDirigidos.add(filme);
         filme.setDiretor(this);
     }
 
     @Override
     public String getInfo() {
-        return String.format("Diretor: %s, Nacionalidade: %s, Filmes Dirigidos: %d",
+        String info =  String.format("Diretor: %s, Nacionalidade: %s, Filmes Dirigidos: %d",
                 getNome(), getNacionalidade(), filmesDirigidos.size());
+        if (!filmesDirigidos.isEmpty()) {
+            info += "\nFilmes Dirigidos:\n";
+            for (Filme filme : filmesDirigidos) {
+                info += String.format("- %s (%d)\n", filme.getTitulo(), filme.getDataLancamento().getYear());
+            }
+        } else {
+            info += "\nNenhum filme dirigido.";
+        }
+        return info;
     }
 }

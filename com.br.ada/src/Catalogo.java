@@ -31,5 +31,16 @@ public class Catalogo {
                 .collect(Collectors.toList());
     }
 
+    public List<Filme> listarFilmes() {
+        return new ArrayList<>(filmes);
+    }
+
+    public List<Diretor> listarDiretores() {
+        return new ArrayList<>(diretores);
+    }
+
+    public List<Ator> listarAtores() {
+        return new ArrayList<>(atores);
+    }
     // Outros métodos necessários
 }
