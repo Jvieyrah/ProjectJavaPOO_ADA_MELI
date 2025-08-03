@@ -3,8 +3,12 @@ import java.util.List;
 import java.util.Scanner;
 
 public class MenuClass {
-  Catalogo catalogo = new Catalogo();
+  Catalogo catalogo;
   private boolean isRunning = true;
+
+  public MenuClass(Catalogo catalogo) {
+    this.catalogo = catalogo;
+  }
 
   public void exibirMenu() {
   seed(); // Popula o catálogo com dados iniciais
