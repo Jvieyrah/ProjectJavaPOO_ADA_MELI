@@ -21,6 +21,7 @@ public class Ator extends Pessoa {
         filme.adicionarAtor(this);
     }
 
+
     @Override
     public String getInfo() {
         String info = String.format("Ator: %s, Nacionalidade: %s, Filmes Participados: %d",
