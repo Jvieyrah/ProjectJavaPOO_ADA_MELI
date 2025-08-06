@@ -356,7 +356,6 @@ public class MenuClass {
       String confirmacao = scanner.next();
       if (confirmacao.equalsIgnoreCase("s")) {
         atorCadastrado.atuarFilme(filmeSelecionado);
-        filmeSelecionado.adicionarAtor(atorCadastrado);
         System.out.println("Ator adicionado com sucesso!");
       } else {
         System.out.println("Operação cancelada.");
@@ -442,7 +441,6 @@ public class MenuClass {
       String confirmacao = scanner.next();
       if (confirmacao.equalsIgnoreCase("s")) {
         diretorCadastrado.dirigirFilme(filmeSelecionado);
-        //filmeSelecionado.setDiretor(diretorCadastrado);
         System.out.println("Diretor adicionado com sucesso!");
       } else {
         System.out.println("Operação cancelada.");

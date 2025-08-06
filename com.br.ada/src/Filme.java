@@ -98,6 +98,9 @@ public class Filme {
         if (ator == null) {
             throw new IllegalArgumentException("Ator não pode ser nulo");
         }
+        if (atores.contains(ator)) {
+            throw new IllegalArgumentException("Este ator já está associado a este filme");
+        }
         atores.add(ator);
     }
 
