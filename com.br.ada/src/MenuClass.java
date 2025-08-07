@@ -1,4 +1,6 @@
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -18,9 +20,10 @@ public class MenuClass {
     System.out.println("2. Cadastrar Diretor");
     System.out.println("3. Cadastrar Ator");
     System.out.println("4. Buscar Filme por Nome");
-    System.out.println("5. Editar um filme cadastrado");
-    System.out.println("6. Editar um diretor cadastrado");
-    System.out.println("7. Editar um ator cadastrado");
+    System.out.println("5. Listar Filmes Cadastrados");
+    System.out.println("6. Editar um filme cadastrado");
+    System.out.println("7. Editar um diretor cadastrado");
+    System.out.println("8. Editar um ator cadastrado");
     System.out.println("0. Sair");
 
     int opcao = new Scanner(System.in).nextInt();
@@ -39,12 +42,15 @@ public class MenuClass {
         buscarFilmePorNome();
         break;
       case 5:
-        editarfilme();
+        ListaFilmesCadastrados();
         break;
       case 6:
-        editarDiretor();
+        editarfilme();
         break;
       case 7:
+        editarDiretor();
+        break;
+      case 8:
         editarAtor();
         break;
       case 0:
@@ -96,9 +102,23 @@ public class MenuClass {
           atorSelecionado.setNome(novoNome);
           break;
         case 2:
-          System.out.print("Digite a nova data de nascimento (AAAA-MM-DD): ");
-          String novaData = scanner.nextLine();
-          atorSelecionado.setDataNascimento(LocalDate.parse(novaData));
+          while (true) {
+            System.out.print("Digite a nova data de nascimento (AAAA-MM-DD) ou 'sair' para cancelar: ");
+            String novaData = scanner.nextLine().trim();
+
+            if (novaData.equalsIgnoreCase("sair")) {
+              System.out.println("Edição de data de nascimento cancelada.");
+              break;
+            }
+            try {
+              LocalDate data = LocalDate.parse(novaData);
+              atorSelecionado.setDataNascimento(data);
+              System.out.println("Data de nascimento atualizada para: " + data);
+              break;
+            } catch (DateTimeParseException e) {
+              System.out.println("Data inválida. Use o formato correto: AAAA-MM-DD.");
+            }
+          }
           break;
         case 3:
           System.out.print("Digite a nova nacionalidade: ");
@@ -190,9 +210,24 @@ public class MenuClass {
           diretorSelecionado.setNome(novoNome);
           break;
         case 2:
-          System.out.print("Digite a nova data de nascimento (AAAA-MM-DD): ");
-          String novaData = scanner.nextLine();
-          diretorSelecionado.setDataNascimento(LocalDate.parse(novaData));
+          while (true) {
+            System.out.print("Digite a nova data de nascimento (AAAA-MM-DD) ou 'sair' para cancelar: ");
+            String novaData = scanner.nextLine().trim();
+
+            if (novaData.equalsIgnoreCase("sair")) {
+              System.out.println("Edição de data de nascimento cancelada.");
+              break;
+            }
+
+            try {
+              LocalDate data = LocalDate.parse(novaData);
+              diretorSelecionado.setDataNascimento(data);
+              System.out.println("Data de nascimento atualizada para: " + data);
+              break;
+            } catch (DateTimeParseException e) {
+              System.out.println("Data inválida. Use o formato correto: AAAA-MM-DD.");
+            }
+          }
           break;
         case 3:
           System.out.print("Digite a nova nacionalidade: ");
@@ -288,9 +323,25 @@ public class MenuClass {
           filmeSelecionado.setTitulo(novoTitulo);
           break;
         case 2:
-          System.out.print("Digite a nova data de lançamento (AAAA-MM-DD): ");
-          String novaData = scanner.nextLine();
-          filmeSelecionado.setDataLancamento(LocalDate.parse(novaData));
+          while (true) {
+            System.out.print("Digite a nova data de lançamento (AAAA-MM-DD) ou 'sair' para cancelar: ");
+            String novaData = scanner.nextLine().trim();
+
+            if (novaData.equalsIgnoreCase("sair")) {
+              System.out.println("Edição da data de lançamento cancelada.");
+              break;
+            }
+
+            try {
+              LocalDate data = LocalDate.parse(novaData);
+              filmeSelecionado.setDataLancamento(data);
+              System.out.println("Data de lançamento atualizada para: " + data);
+              break;
+            } catch (DateTimeParseException e) {
+              System.out.println("Data inválida. Use o formato correto: AAAA-MM-DD.");
+            }
+          }
+
           break;
         case 3:
           System.out.print("Digite o novo orçamento: ");
@@ -302,8 +353,9 @@ public class MenuClass {
           String novaDescricao = scanner.nextLine();
           filmeSelecionado.setDescricao(novaDescricao);
           break;
+
         case 5:
-           adicionarDiretorCadastrado(filmeSelecionado);
+          ListaFilmesCadastrados();
           break;
         case 6:
           adicionarDiretorNaoCadastrado(filmeSelecionado);
@@ -378,49 +430,99 @@ public class MenuClass {
     }
   }
 
-  private void cadastrarAtor() {
-    Scanner scanner = new Scanner(System.in);
-    System.out.print("Digite o nome do ator: ");
-    String nome = scanner.nextLine();
-    System.out.print("Digite a data de nascimento (AAAA-MM-DD): ");
-    String dataNascimento = scanner.nextLine();
-    System.out.print("Digite a nacionalidade do ator: ");
-    String nacionalidade = scanner.nextLine();
+  private void ListaFilmesCadastrados() {
+    List<Filme> filmes = catalogo.listarFilmes();
+    if (filmes.isEmpty()) {
+      System.out.println("Nenhum filme cadastrado.");
+    } else {
+      filmes.forEach(filme -> System.out.println(filme.getInfo() + "\n"));
+    }
+  }
 
-    Ator ator = new Ator(nome, LocalDate.parse(dataNascimento), nacionalidade);
-    catalogo.cadastrarAtor(ator);
-    System.out.println("Ator cadastrado com sucesso!");
+
+  private void cadastrarAtor() {
+      Scanner scanner = new Scanner(System.in);
+      System.out.print("Digite o nome do ator: ");
+      String nome = scanner.nextLine();
+      LocalDate dataNascimento;
+      while (true) {
+          System.out.print("Digite a data de nascimento (AAAA-MM-DD) ou 'sair' para cancelar: ");
+          String entrada = scanner.nextLine().trim();
+
+          if (entrada.equalsIgnoreCase("sair")) {
+              System.out.println("Cadastro cancelado.");
+              return; // ou break, dependendo do fluxo do seu sistema
+          }
+
+          try {
+              dataNascimento = LocalDate.parse(entrada);
+              break;
+          } catch (DateTimeParseException e) {
+              System.out.println("Data inválida. Use o formato correto: AAAA-MM-DD.");
+          }
+      }
+      System.out.print("Digite a nacionalidade do ator: ");
+      String nacionalidade = scanner.nextLine();
+
+      Ator ator = new Ator(nome, dataNascimento, nacionalidade);
+      catalogo.cadastrarAtor(ator);
+      System.out.println("Ator cadastrado com sucesso!");
   }
 
   private void cadastrarDiretor() {
     Scanner scanner = new Scanner(System.in);
     System.out.print("Digite o nome do diretor: ");
     String nome = scanner.nextLine();
-    System.out.print("Digite a data de nascimento (AAAA-MM-DD): ");
-    String dataNascimento = scanner.nextLine();
+    LocalDate dataNascimento = null;
+    while (dataNascimento == null) {
+      System.out.print("Digite a data de nascimento (AAAA-MM-DD): ");
+      String input = scanner.nextLine();
+      try {
+        dataNascimento = LocalDate.parse(input);
+      } catch (DateTimeParseException e) {
+        System.out.println("Data inválida! Por favor, digite no formato correto: AAAA-MM-DD.");
+      }
+    }
+
     System.out.print("Digite a nacionalidade do diretor: ");
     String nacionalidade = scanner.nextLine();
 
-    Diretor diretor = new Diretor(nome, LocalDate.parse(dataNascimento), nacionalidade);
+    Diretor diretor = new Diretor(nome, dataNascimento, nacionalidade);
     catalogo.cadastrarDiretor(diretor);
     System.out.println("Diretor cadastrado com sucesso!");
   }
 
   private void cadastrarFilme() {
-    Scanner scanner = new Scanner(System.in);
-    System.out.print("Digite o título do filme: ");
-    String titulo = scanner.nextLine();
-    System.out.print("Digite a data de lançamento (AAAA-MM-DD): ");
-    String dataLancamento = scanner.nextLine();
-    System.out.print("Digite o orçamento do filme: ");
-    double orcamento = scanner.nextDouble();
-    scanner.nextLine(); // Consumir a quebra de linha
-    System.out.print("Digite a descrição do filme: ");
-    String descricao = scanner.nextLine();
+      Scanner scanner = new Scanner(System.in);
+      System.out.print("Digite o título do filme: ");
+      String titulo = scanner.nextLine();
+      LocalDate dataLancamento;
+      while (true) {
+          System.out.print("Digite a data de lançamento (AAAA-MM-DD) ou 'sair' para cancelar o cadastro: ");
+          String entrada = scanner.nextLine().trim();
 
-    Filme filme = new Filme(titulo, LocalDate.parse(dataLancamento), orcamento, descricao);
-    catalogo.cadastrarFilme(filme);
-    System.out.println("Filme cadastrado com sucesso!");
+          if (entrada.equalsIgnoreCase("sair")) {
+              System.out.println("Cadastro cancelado.");
+              return; // ou break, dependendo do fluxo do seu programa
+          }
+
+          try {
+              dataLancamento = LocalDate.parse(entrada);
+              break;
+          } catch (DateTimeParseException e) {
+              System.out.println("Data inválida. Use o formato correto: AAAA-MM-DD.");
+          }
+      }
+
+      System.out.print("Digite o orçamento do filme: ");
+      double orcamento = scanner.nextDouble();
+      scanner.nextLine(); // Consumir a quebra de linha
+      System.out.print("Digite a descrição do filme: ");
+      String descricao = scanner.nextLine();
+
+      Filme filme = new Filme(titulo, dataLancamento, orcamento, descricao);
+      catalogo.cadastrarFilme(filme);
+      System.out.println("Filme cadastrado com sucesso!");
   }
 
   private void adicionarDiretorCadastrado(Filme filmeSelecionado){
@@ -483,5 +585,7 @@ public class MenuClass {
 
     Filme filme3 = new Filme("Schindler's List", LocalDate.of(1993, 12, 15), 22000000, "A história de Oskar Schindler...");
     catalogo.cadastrarFilme(filme3);
+
+    ListaFilmesCadastrados();
   }
 }

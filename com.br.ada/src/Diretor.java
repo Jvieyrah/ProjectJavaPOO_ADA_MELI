@@ -27,7 +27,11 @@ public class Diretor extends Pessoa {
                 getNome(), getNacionalidade(), filmesDirigidos.size());
         if (!filmesDirigidos.isEmpty()) {
             info += "\nFilmes Dirigidos:\n";
-            for (Filme filme : filmesDirigidos) {
+
+            List<Filme> filmesOrdenados = new ArrayList<>(filmesDirigidos);
+            filmesOrdenados.sort((f1, f2) -> f2.getDataLancamento().compareTo(f1.getDataLancamento()));
+
+            for (Filme filme : filmesOrdenados) {
                 info += String.format("- %s (%d)\n", filme.getTitulo(), filme.getDataLancamento().getYear());
             }
         } else {

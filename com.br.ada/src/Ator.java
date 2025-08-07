@@ -21,14 +21,17 @@ public class Ator extends Pessoa {
         filme.adicionarAtor(this);
     }
 
-
     @Override
     public String getInfo() {
         String info = String.format("Ator: %s, Nacionalidade: %s, Filmes Participados: %d",
                 getNome(), getNacionalidade(), filmesParticipados.size());
         if (!filmesParticipados.isEmpty()) {
             info += "\nFilmes Participados:\n";
-            for (Filme filme : filmesParticipados) {
+
+            List<Filme> filmesOrdenados = new ArrayList<>(filmesParticipados);
+            filmesOrdenados.sort((f1, f2) -> f2.getDataLancamento().compareTo(f1.getDataLancamento()));
+
+            for (Filme filme : filmesOrdenados) {
                 info += String.format("- %s (%d)\n", filme.getTitulo(), filme.getDataLancamento().getYear());
             }
         } else {
