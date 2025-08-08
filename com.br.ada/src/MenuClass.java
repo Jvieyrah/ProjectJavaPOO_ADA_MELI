@@ -1,5 +1,6 @@
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -255,32 +256,43 @@ public class MenuClass {
   private void adicionarFilmeDiretor(Diretor diretorSelecionado) {
     Scanner scanner = new Scanner(System.in);
     System.out.println("Selecione um filme já cadastrado:");
+
     List<Filme> filmes = catalogo.listarFilmes();
     if (filmes.isEmpty()) {
       System.out.println("Nenhum filme cadastrado.");
       return;
     }
 
-    for (int i = 0; i < filmes.size(); i++) {
-      if (filmes.get(i).getDiretores().isEmpty() || !filmes.get(i).getDiretores().contains(diretorSelecionado)) {
-        System.out.println((i + 1) + ". " + filmes.get(i).getTitulo());
+    // Cria a lista filtrada com filmes que ainda não possuem esse diretor
+    List<Filme> filmesDisponiveis = new ArrayList<>();
+    for (Filme filme : filmes) {
+      if (!filme.getDiretores().contains(diretorSelecionado)) {
+        filmesDisponiveis.add(filme);
       }
     }
 
-    int escolhaFilme = scanner.nextInt() - 1;
-    if (escolhaFilme >= 0 && escolhaFilme < filmes.size()) {
-      Filme filmeSelecionado = filmes.get(escolhaFilme);
+    if (filmesDisponiveis.isEmpty()) {
+      System.out.println("Este diretor já está associado a todos os filmes.");
+      return;
+    }
 
-      if (filmeSelecionado.getDiretores().contains(diretorSelecionado)) {
-        System.out.println("Este diretor já está associado a este filme.");
-        return;
-      }
+    // Mostra os filmes disponíveis
+    for (int i = 0; i < filmesDisponiveis.size(); i++) {
+      System.out.println((i + 1) + ". " + filmesDisponiveis.get(i).getTitulo());
+    }
+
+    int escolhaFilme = scanner.nextInt() - 1;
+    scanner.nextLine(); // limpar o buffer
+
+    if (escolhaFilme >= 0 && escolhaFilme < filmesDisponiveis.size()) {
+      Filme filmeSelecionado = filmesDisponiveis.get(escolhaFilme);
 
       System.out.println("Deseja adicionar " + diretorSelecionado.getNome()
-              + " como diretor do Filme " + filmeSelecionado.getTitulo() + "? (s/n)");
-      String confirmacao = scanner.next();
+              + " como diretor do filme " + filmeSelecionado.getTitulo() + "? (s/n)");
+      String confirmacao = scanner.nextLine();
+
       if (confirmacao.equalsIgnoreCase("s")) {
-        diretorSelecionado.dirigirFilme(filmeSelecionado);
+        filmeSelecionado.setDiretor(diretorSelecionado);
         System.out.println("Diretor adicionado com sucesso!");
       } else {
         System.out.println("Operação cancelada.");
@@ -289,6 +301,7 @@ public class MenuClass {
       System.out.println("Opção inválida.");
     }
   }
+
 
   private void listarAtoresCadastrados() {
     List<Ator> atores = catalogo.listarAtores();
@@ -389,7 +402,7 @@ public class MenuClass {
           break;
 
         case 5:
-          ListaFilmesCadastrados();
+          adicionarDiretorCadastrado(filmeSelecionado);
           break;
         case 6:
           adicionarDiretorNaoCadastrado(filmeSelecionado);
@@ -559,25 +572,34 @@ public class MenuClass {
       System.out.println("Filme cadastrado com sucesso!");
   }
 
-  private void adicionarDiretorCadastrado(Filme filmeSelecionado){
+  private void adicionarDiretorCadastrado(Filme filmeSelecionado) {
     Scanner scanner = new Scanner(System.in);
     System.out.println("Selecione um diretor já cadastrado:");
     List<Diretor> diretores = catalogo.listarDiretores();
+
     if (diretores.isEmpty()) {
       System.out.println("Nenhum diretor cadastrado.");
+      return;
     }
+
     for (int i = 0; i < diretores.size(); i++) {
       System.out.println((i + 1) + ". " + diretores.get(i).getNome());
     }
+
     int escolhaDiretor = scanner.nextInt() - 1;
+
     if (escolhaDiretor >= 0 && escolhaDiretor < diretores.size()) {
       Diretor diretorCadastrado = diretores.get(escolhaDiretor);
+
       System.out.println("Deseja cadastrar " + diretorCadastrado.getNome()
-          + " como diretor do Filme " + filmeSelecionado.getTitulo() + "? (s/n)");
+              + " como diretor do Filme " + filmeSelecionado.getTitulo() + "? (s/n)");
       String confirmacao = scanner.next();
+
       if (confirmacao.equalsIgnoreCase("s")) {
-        diretorCadastrado.dirigirFilme(filmeSelecionado);
-        System.out.println("Diretor adicionado com sucesso!");
+        boolean sucesso = filmeSelecionado.verificarOuAdicionarDiretor(diretorCadastrado);
+        if (sucesso) {
+          System.out.println("Diretor adicionado com sucesso!");
+        }
       } else {
         System.out.println("Operação cancelada.");
       }
@@ -585,6 +607,8 @@ public class MenuClass {
       System.out.println("Opção inválida.");
     }
   }
+
+
 
   private void adicionarDiretorNaoCadastrado(Filme filmeSelecionado) {
     cadastrarDiretor();

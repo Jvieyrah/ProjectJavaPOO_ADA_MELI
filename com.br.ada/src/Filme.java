@@ -97,10 +97,30 @@ public class Filme {
         if (!diretores.contains(diretor)) {
             diretores.add(diretor);
             diretor.dirigirFilme(this);
-        } else {
-            System.out.println("Este diretor já está associado a este filme.");
         }
     }
+
+
+    public boolean verificarOuAdicionarDiretor(Diretor diretor) {
+        if (diretor == null) {
+            throw new IllegalArgumentException("Diretor não pode ser nulo");
+        }
+
+        if (this.diretores == null) {
+            this.diretores = new ArrayList<>();
+        }
+
+        if (!this.diretores.contains(diretor)) {
+            this.diretores.add(diretor);
+            diretor.dirigirFilme(this);
+            return true;
+        }
+
+        System.out.println("Este diretor já está associado ao filme: " + this.getTitulo());
+        return false;
+    }
+
+
 
     // Métodos para manipulação de atores
     public void adicionarAtor(Ator ator) {
