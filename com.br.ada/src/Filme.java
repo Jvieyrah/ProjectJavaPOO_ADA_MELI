@@ -1,13 +1,14 @@
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Filme {
     private String titulo;
     private LocalDate dataLancamento;
     private double orcamento;
     private String descricao;
-    private Diretor diretor;
+    private List<Diretor> diretores;
     private List<Ator> atores;
 
     public Filme(String titulo, LocalDate dataLancamento, double orcamento, String descricao) {
@@ -28,7 +29,9 @@ public class Filme {
         this.dataLancamento = dataLancamento;
         this.orcamento = orcamento;
         this.descricao = descricao;
+        this.diretores = new ArrayList<>();
         this.atores = new ArrayList<>();
+
     }
 
     // Getters
@@ -48,9 +51,10 @@ public class Filme {
         return descricao;
     }
 
-    public Diretor getDiretor() {
-        return diretor;
+    public List<Diretor> getDiretores() {
+        return diretores;
     }
+
 
     public List<Ator> getAtores() {
         return new ArrayList<>(atores); // Retorna cópia para evitar modificações externas
@@ -90,7 +94,12 @@ public class Filme {
         if (diretor == null) {
             throw new IllegalArgumentException("Diretor não pode ser nulo");
         }
-        this.diretor = diretor;
+        if (!diretores.contains(diretor)) {
+            diretores.add(diretor);
+            diretor.dirigirFilme(this);
+        } else {
+            System.out.println("Este diretor já está associado a este filme.");
+        }
     }
 
     // Métodos para manipulação de atores
@@ -98,10 +107,12 @@ public class Filme {
         if (ator == null) {
             throw new IllegalArgumentException("Ator não pode ser nulo");
         }
-        if (atores.contains(ator)) {
-            throw new IllegalArgumentException("Este ator já está associado a este filme");
+        if (!atores.contains(ator)) {
+            atores.add(ator);
+            ator.atuarFilme(this);
+        } else {
+            System.out.println("Este ator já está associado a este filme.");
         }
-        atores.add(ator);
     }
 
     public boolean removerAtor(Ator ator) {
@@ -110,13 +121,12 @@ public class Filme {
 
     // Método de informação formatada
     public String getInfo() {
-        String nomeDiretor = (diretor != null) ? diretor.getNome() : "Não definido";
-        String info =  String.format("Filme: %s | Diretor: %s | %d ator(es) | Lançamento: %s | Orçamento: $%,.2f",
-                titulo,
-                nomeDiretor,
-                atores.size(),
-                dataLancamento.toString(),
-                orcamento);
+        String nomeDiretores = (diretores.isEmpty()) ? "Não definido" :
+                diretores.stream()
+                        .map(Diretor::getNome)
+                        .collect(Collectors.joining(", "));
+        String info = String.format("Filme: %s | Diretores: %s | %d ator(es) | Lançamento: %s | Orçamento: $%,.2f",
+                titulo, nomeDiretores, atores.size(), dataLancamento.toString(), orcamento);
 
         if (!atores.isEmpty()) {
             info += "\nAtores:\n";
@@ -128,6 +138,22 @@ public class Filme {
         }
         return info;
     }
+
+    public void removerDiretor(Diretor diretor) {
+        if (diretor == null) {
+            throw new IllegalArgumentException("Diretor não pode ser nulo");
+        }
+        if (diretores.contains(diretor)) {
+            diretores.remove(diretor);
+
+            System.out.println("Diretor removido com sucesso.");
+        } else {
+            System.out.println("Este diretor não está associado a este filme.");
+        }
+    }
+
+
+
 
     @Override
     public String toString() {

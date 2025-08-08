@@ -1,6 +1,5 @@
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -14,53 +13,61 @@ public class MenuClass {
 
   public void exibirMenu() {
   seed(); // Popula o catálogo com dados iniciais
-  while (isRunning) {
-    System.out.println("Menu:");
-    System.out.println("1. Cadastrar Filme");
-    System.out.println("2. Cadastrar Diretor");
-    System.out.println("3. Cadastrar Ator");
-    System.out.println("4. Buscar Filme por Nome");
-    System.out.println("5. Listar Filmes Cadastrados");
-    System.out.println("6. Editar um filme cadastrado");
-    System.out.println("7. Editar um diretor cadastrado");
-    System.out.println("8. Editar um ator cadastrado");
-    System.out.println("0. Sair");
+    while (isRunning) {
+      System.out.println("Menu:");
+      System.out.println("1. Cadastrar Filme");
+      System.out.println("2. Cadastrar Diretor");
+      System.out.println("3. Cadastrar Ator");
+      System.out.println("4. Buscar Filme por Nome");
+      System.out.println("5. Editar um filme cadastrado");
+      System.out.println("6. Editar um diretor cadastrado");
+      System.out.println("7. Editar um ator cadastrado");
+      System.out.println("8. Listar Filmes Cadastrados");
+      System.out.println("9. Listar Atores Cadastrados");
+      System.out.println("10. Listar Diretores Cadastrados");
+      System.out.println("0. Sair");
 
-    int opcao = new Scanner(System.in).nextInt();
+      int opcao = new Scanner(System.in).nextInt();
 
-    switch (opcao) {
-      case 1:
-        cadastrarFilme();
-        break;
-      case 2:
-        cadastrarDiretor();
-        break;
-      case 3:
-        cadastrarAtor();
-        break;
-      case 4:
-        buscarFilmePorNome();
-        break;
-      case 5:
-        ListaFilmesCadastrados();
-        break;
-      case 6:
-        editarfilme();
-        break;
-      case 7:
-        editarDiretor();
-        break;
-      case 8:
-        editarAtor();
-        break;
-      case 0:
-        System.out.println("Saindo...");
-        isRunning = false;
-        return;
-      default:
-        System.out.println("Opção inválida, tente novamente.");
+      switch (opcao) {
+        case 1:
+          cadastrarFilme();
+          break;
+        case 2:
+          cadastrarDiretor();
+          break;
+        case 3:
+          cadastrarAtor();
+          break;
+        case 4:
+          buscarFilmePorNome();
+          break;
+        case 5:
+          editarfilme();
+          break;
+        case 6:
+          editarDiretor();
+          break;
+        case 7:
+          editarAtor();
+          break;
+        case 8:
+          ListaFilmesCadastrados();
+          break;
+        case 9:
+          listarAtoresCadastrados();
+          break;
+        case 10:
+          listarDiretoresCadastrados();
+          break;
+        case 0:
+          System.out.println("Saindo...");
+          isRunning = false;
+          return;
+        default:
+          System.out.println("Opção inválida, tente novamente.");
+      }
     }
-  }
   }
 
   private void editarAtor() {
@@ -253,30 +260,57 @@ public class MenuClass {
       System.out.println("Nenhum filme cadastrado.");
       return;
     }
+
     for (int i = 0; i < filmes.size(); i++) {
-      if (filmes.get(i).getDiretor() == null || !filmes.get(i).getDiretor().getNome().equals(diretorSelecionado.getNome())){
+      if (filmes.get(i).getDiretores().isEmpty() || !filmes.get(i).getDiretores().contains(diretorSelecionado)) {
         System.out.println((i + 1) + ". " + filmes.get(i).getTitulo());
       }
     }
+
     int escolhaFilme = scanner.nextInt() - 1;
     if (escolhaFilme >= 0 && escolhaFilme < filmes.size()) {
       Filme filmeSelecionado = filmes.get(escolhaFilme);
-      if ( filmeSelecionado.getDiretor() != null && filmeSelecionado.getDiretor().getNome().equals(diretorSelecionado.getNome())) {
+
+      if (filmeSelecionado.getDiretores().contains(diretorSelecionado)) {
         System.out.println("Este diretor já está associado a este filme.");
         return;
       }
+
       System.out.println("Deseja adicionar " + diretorSelecionado.getNome()
-          + " como diretor do Filme " + filmeSelecionado.getTitulo() + "? (s/n)");
+              + " como diretor do Filme " + filmeSelecionado.getTitulo() + "? (s/n)");
       String confirmacao = scanner.next();
       if (confirmacao.equalsIgnoreCase("s")) {
         diretorSelecionado.dirigirFilme(filmeSelecionado);
-        //filmeSelecionado.setDiretor(diretorSelecionado);
         System.out.println("Diretor adicionado com sucesso!");
       } else {
         System.out.println("Operação cancelada.");
       }
     } else {
       System.out.println("Opção inválida.");
+    }
+  }
+
+  private void listarAtoresCadastrados() {
+    List<Ator> atores = catalogo.listarAtores();
+    if (atores.isEmpty()) {
+      System.out.println("Nenhum ator cadastrado.");
+    } else {
+      System.out.println("Atores cadastrados:");
+      for (Ator ator : atores) {
+        System.out.println(ator.getInfo() + "\n");
+      }
+    }
+  }
+
+  private void listarDiretoresCadastrados() {
+    List<Diretor> diretores = catalogo.listarDiretores();
+    if (diretores.isEmpty()) {
+      System.out.println("Nenhum diretor cadastrado.");
+    } else {
+      System.out.println("Diretores cadastrados:");
+      for (Diretor diretor : diretores) {
+        System.out.println(diretor.getInfo() + "\n");
+      }
     }
   }
 
@@ -568,6 +602,9 @@ public class MenuClass {
     Diretor diretor3 = new Diretor("Steven Spielberg", LocalDate.of(1946, 12, 18), "Americano");
     catalogo.cadastrarDiretor(diretor3);
 
+    Diretor diretor4 = new Diretor("Quentin Tarantino", LocalDate.of(1963, 3, 27), "Americano");
+    catalogo.cadastrarDiretor(diretor4);
+
     Ator ator1 = new Ator("Leonardo DiCaprio", LocalDate.of(1974, 11, 11), "Americano");
     catalogo.cadastrarAtor(ator1);
 
@@ -578,13 +615,22 @@ public class MenuClass {
     catalogo.cadastrarAtor(ator3);
 
     Filme filme1 = new Filme("Inception", LocalDate.of(2010, 7, 16), 160000000, "Um ladrão que rouba segredos corporativos...");
+    filme1.setDiretor(diretor1);
+    filme1.adicionarAtor(ator1);
+    filme1.adicionarAtor(ator2);
     catalogo.cadastrarFilme(filme1);
 
     Filme filme2 = new Filme("The Wolf of Wall Street", LocalDate.of(2013, 12, 25), 100000000, "A história de Jordan Belfort...");
+    filme2.setDiretor(diretor2);
+    filme2.adicionarAtor(ator1);
     catalogo.cadastrarFilme(filme2);
 
     Filme filme3 = new Filme("Schindler's List", LocalDate.of(1993, 12, 15), 22000000, "A história de Oskar Schindler...");
+    filme3.setDiretor(diretor3);
+    filme3.setDiretor(diretor4);
+    filme3.adicionarAtor(ator3);
     catalogo.cadastrarFilme(filme3);
+
 
     ListaFilmesCadastrados();
   }

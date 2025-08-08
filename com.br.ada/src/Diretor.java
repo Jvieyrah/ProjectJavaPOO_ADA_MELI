@@ -14,12 +14,13 @@ public class Diretor extends Pessoa {
         if (filme == null) {
             throw new IllegalArgumentException("Filme não pode ser nulo.");
         }
-        if (filmesDirigidos.contains(filme)) {
-            throw new IllegalArgumentException("Este filme já é dirigido por este diretor.");
+        if (!filmesDirigidos.contains(filme)) {
+            filmesDirigidos.add(filme);
+            filme.setDiretor(this);
         }
-        filmesDirigidos.add(filme);
-        filme.setDiretor(this);
     }
+
+
 
     @Override
     public String getInfo() {
