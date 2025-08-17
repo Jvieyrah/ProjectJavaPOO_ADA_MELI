@@ -655,7 +655,6 @@ public class MenuClass {
     filme3.adicionarAtor(ator3);
     catalogo.cadastrarFilme(filme3);
 
-
     ListaFilmesCadastrados();
   }
 }
